@@ -1,0 +1,898 @@
+{
+  "name": "CRM_Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1b511ef8-95f5-4c2b-8ccd-06ede76adad2",
+              "name": "post.id",
+              "value": "={{ $json.body.post.id }}",
+              "type": "string"
+            },
+            {
+              "id": "b2b0b7e8-3fcb-40d6-9008-72de055459b7",
+              "name": "post.platform",
+              "value": "={{ $json.body.post.platform }}",
+              "type": "string"
+            },
+            {
+              "id": "2590c33e-15b4-460f-b01f-f92c261bde24",
+              "name": "post.campaign",
+              "value": "={{ $json.body.post.campaign }}",
+              "type": "string"
+            },
+            {
+              "id": "46fe7a58-e8a2-40a7-b452-44bc04c5797e",
+              "name": "post.caption",
+              "value": "={{ $json.body.post.caption }}",
+              "type": "string"
+            },
+            {
+              "id": "6fe20cae-a68d-4992-b561-3604414d8614",
+              "name": "post.hashtags",
+              "value": "={{ $json.body.post.hashtags }}",
+              "type": "array"
+            },
+            {
+              "id": "dc411a6c-0ee8-4501-8e73-3d752fd115da",
+              "name": "post.media_type",
+              "value": "={{ $json.body.post.media_type }}",
+              "type": "string"
+            },
+            {
+              "id": "ccda0e6a-6797-4a78-85aa-874bedf959d1",
+              "name": "post.posting_hour",
+              "value": "={{ $json.body.post.posting_hour }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -352,
+        -80
+      ],
+      "id": "99117774-809c-49f1-b29a-3696a873021c",
+      "name": "Normalize Post Data"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f8b01594-227e-4377-b175-8f694d20f857",
+              "leftValue": "={{ $json.post.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        -80
+      ],
+      "id": "26b92bc0-4ccb-4861-aa46-b1326700ea93",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "690e2848-db5e-49f5-b288-07cac8897987",
+              "leftValue": "={{ $json.output.predicted_engagement }}",
+              "rightValue": 0.7,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        -96
+      ],
+      "id": "2a12dba8-8ea2-4c40-90dd-9fe5e4916d72",
+      "name": "Check_prediction_engagement"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cd44ab50-2fb3-4d8c-8e55-af216456026d",
+              "name": "post.status",
+              "value": "NEEDS_REVISION",
+              "type": "string"
+            },
+            {
+              "id": "1366191c-381c-479b-8020-a6efee282247",
+              "name": "crm.action",
+              "value": "CREATE_TASK",
+              "type": "string"
+            },
+            {
+              "id": "ff84ae6b-7599-44b7-a244-a50677db4278",
+              "name": "crm.message",
+              "value": "Low predicted engagement. Review required.",
+              "type": "string"
+            },
+            {
+              "id": "7d46883a-21d2-438f-a444-1285cb17c969",
+              "name": "crm.priority",
+              "value": "HIGH",
+              "type": "string"
+            },
+            {
+              "id": "111d9791-bd97-48de-ab1b-7bc29a75965d",
+              "name": "crm.short_reason",
+              "value": "={{ $json.output.short_reason }}",
+              "type": "string"
+            },
+            {
+              "id": "4781effb-c31e-4ff3-b3ea-f9da55961988",
+              "name": "Decision_Timestamp_ZOHO",
+              "value": "={{ new Date().toISOString().split('.')[0] + 'Z' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        -288
+      ],
+      "id": "797fbfc3-bf71-425a-b40c-4019ad99c5a8",
+      "name": "Flag Post for Revision"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d9b3df31-3192-4116-9dce-398fdb63adba",
+              "name": "post.status",
+              "value": "APPROVED",
+              "type": "string"
+            },
+            {
+              "id": "fd0e0e0b-dd76-4b47-be60-9dcbb4746653",
+              "name": "crm.action",
+              "value": "READY_FOR_PUBLISHING",
+              "type": "string"
+            },
+            {
+              "id": "3d937e05-76ef-4a07-a8ab-e82a915b2087",
+              "name": "crm.message",
+              "value": "Post approved based on AI evaluation.",
+              "type": "string"
+            },
+            {
+              "id": "1dbdd5a9-50a0-4abc-b24e-524443a5f5c2",
+              "name": "Decision_Timestamp_ZOHO",
+              "value": "={{ new Date().toISOString().split('.')[0] + 'Z' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        48
+      ],
+      "id": "5d9fcddd-1ca8-468a-8227-104fcce4df97",
+      "name": "Approve Post"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"post_id\": \"{{$json.post.id}}\",\n  \"final_status\": \"{{$json.post.status}}\",\n  \"crm_action\": \"{{$json.crm.action}}\",\n  \"message\": \"{{$json.crm.message}}\",\n  \"ai_evaluation\": {\n    \"predicted_engagement\": \"{{ $('Edit Fields').item.json.ai.predicted_engagement }}\",\n    \"risk_level\": \"{{ $('Edit Fields').item.json.ai.risk_level }}\",\n    \"confidence\": \"{{ $('Edit Fields').item.json.ai.confidence }}\",\n    \"recommendations\": \"{{ $('Edit Fields').item.json.ai.recommendations }}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1424,
+        48
+      ],
+      "id": "b87c5195-d790-4e88-b8ba-e7cc9da2a9a5",
+      "name": "Respond to Webhook Success"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"post_id\": \"{{$json.post.id}}\",\n  \"final_status\": \"{{$json.post.status}}\",\n  \"crm_action\": \"{{$json.crm.action}}\",\n  \"message\": \"{{$json.crm.message}}\",\n  \"ai_evaluation\": {\n    \"predicted_engagement\": \"{{ $('Edit Fields').item.json.ai.predicted_engagement }}\",\n    \"risk_level\": \"{{ $('Edit Fields').item.json.ai.risk_level }}\",\n    \"confidence\": \"{{ $('Edit Fields').item.json.ai.confidence }}\",\n    \"recommendations\": \"{{ $('Edit Fields').item.json.ai.recommendations }}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2960,
+        -288
+      ],
+      "id": "5eea4a5f-8214-48a4-a897-2ff93f1136d4",
+      "name": "Respond to Webhook faild"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.zohoapis.com/crm/v2/Posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": [\n    {\n      \"Name\": \"{{ $('Normalize Post Data').item.json.post.id }}\",\n      \"Post_ID\": \"{{ $('Normalize Post Data').item.json.post.id }}\",\n      \"Platform\":\"{{ $('Webhook').item.json.body.post.platform }}\",\n      \"Campaign_Name\": \"{{ $('Normalize Post Data').item.json.post.campaign }}\",\n      \"Caption\": \"{{ $('Normalize Post Data').item.json.post.caption }}\",\n      \"Predicted_Engagement\": {{ $('Check_prediction_engagement').item.json.ai.predicted_engagement }},\n      \"Risk_Level\": \"{{ $('Check_prediction_engagement').item.json.ai.risk_level }}\",\n      \"AI_Recommendations\": \"{{ $('Check_prediction_engagement').item.json.ai.recommendations }}\",\n      \"Status\": \"{{ $json.post.status }}\",\n      \"Decision_Timestamp\": \"{{ $json.Decision_Timestamp_ZOHO }}\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        976,
+        48
+      ],
+      "id": "21020cfe-1ef7-42b8-826d-10ce225b129c",
+      "name": "HTTP Request  to ZOHO",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "k60XazRTl3AljB5y",
+          "name": "Zoho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dce65947-6634-42bb-9606-adc22792d119",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -624,
+        -80
+      ],
+      "id": "8a5c77df-3962-43eb-8e48-a0b70bd9f956",
+      "name": "Webhook",
+      "webhookId": "dce65947-6634-42bb-9606-adc22792d119"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2861e0e-5cef-45f9-ae73-26873c996e7d",
+              "name": "zoho.post_id",
+              "value": "={{ $json.data[0].details.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        48
+      ],
+      "id": "43f77d20-d570-4b10-a6d0-89476ff73856",
+      "name": "Store Zoho Id"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.zohoapis.com/crm/v2/Posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": [\n    {\n      \"Name\": \"{{ $('Normalize Post Data').item.json.post.id }}\",\n      \"Post_ID\": \"{{ $('Normalize Post Data').item.json.post.id }}\",\n      \"Campaign_Name\": \"{{ $('Normalize Post Data').item.json.post.campaign }}\",\n      \"Caption\": \"{{ $('Normalize Post Data').item.json.post.caption }}\",\n      \"Predicted_Engagement\": {{ $('AI Agent prediction').item.json.output.predicted_engagement }},\n      \"Risk_Level\": \"{{ $('AI Agent prediction').item.json.output.risk_level }}\",\n      \"AI_Recommendations\": \"Improve the Post content\",\n      \"Status\": \"{{ $json.post.status }}\",\n      \"Decision_Timestamp\": \"{{ $json.Decision_Timestamp_ZOHO }}\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -288
+      ],
+      "id": "1459d2c5-934f-41c1-9274-350dab80db6a",
+      "name": "HTTP Request  to ZOHO1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "k60XazRTl3AljB5y",
+          "name": "Zoho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2861e0e-5cef-45f9-ae73-26873c996e7d",
+              "name": "zoho.post_id",
+              "value": "={{ $json.data[0].details.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        -288
+      ],
+      "id": "656f4372-a832-4e0e-84ba-e49edc4cd356",
+      "name": "Store Zoho Id1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Optimize the following social media post to maximize engagement.\n\nPlatform: {{ $('Normalize Post Data').item.json.post.platform }}\nMedia type: {{ $('Normalize Post Data').item.json.post.media_type }}\nCampaign goal: {{ $('Normalize Post Data').item.json.post.campaign }}\n\nOriginal caption:\n\"{{ $('Normalize Post Data').item.json.post.caption }}\"\n\nOriginal hashtags:\n{{ $('Normalize Post Data').item.json.post.hashtags }}\n\nReason for optimization:\npredicted engagement : {{ $('AI Agent prediction').item.json.output.predicted_engagement }}\nconfidence : {{ $('AI Agent prediction').item.json.output.confidence }}\nrisk level : {{ $('AI Agent prediction').item.json.output.risk_level }}\nreason : {{ $('AI Agent prediction').item.json.output.short_reason }}\nReturn:\n- optimized_caption\n- optimized_hashtags\n- changes_made (list)\n",
+        "options": {
+          "systemMessage": "=You are a Social Media Content Optimizer.\n\nYour task is to rewrite and improve a social media post to MAXIMIZE expected engagement.\n\nConstraints:\n- Do NOT add images or videos.\n- Do NOT change the platform.\n- Preserve the original campaign intent.\n- Optimize ONLY text content.\n\nYou must focus on:\n- Strong opening hook\n- Emotional and persuasive language\n- Clear and compelling CTA\n- Optimal caption length\n- Effective but not spammy hashtags\n- Platform best practices\n\nYou are NOT predicting engagement.\nYou are NOT explaining theory.\n\nIMPORTANT: DO NOT USE TOOLS. Return ONLY raw JSON text without any tool calls.\n\nReturn ONLY a valid JSON object in the specified format.\nDo NOT include markdown.\nDo NOT include any text outside JSON.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        -288
+      ],
+      "id": "42b64617-c831-46d0-84af-f31a045a8525",
+      "name": "AI Agent optimiser"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://www.zohoapis.com/crm/v2/Posts/7175239000000638003",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": [\n    {\n      \"Caption\": \"{{ $('Edit Fields for optimizer').item.json.caption_optimized }}\",\n      \"hashtags\":\"{{ $('Code in JavaScript').item.json.optimized_hashtags }}\",\n      \"Predicted_Engagement\": {{ $json.output.predicted_engagement }},\n      \"AI_Recommendations\": \"{{ $('Code in JavaScript').item.json.changes_made }}\",\n      \"Status\": \"OPTIMIZED\",\n      \"Decision_Timestamp\": \"{{ $('Edit Fields for optimizer').item.json.time_optimized }}\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        -288
+      ],
+      "id": "58708e2e-c9da-419e-b419-1660c6d962aa",
+      "name": "Update the Post via AI Optimser",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "k60XazRTl3AljB5y",
+          "name": "Zoho"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -80
+      ],
+      "id": "0598aaab-1c53-40e7-b5a6-a07486c7e5ce",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Z8TFRgAQmUB3woOl",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## AI predcit engagement\nIf we publish this post, how much engagement can we expect?",
+        "height": 112,
+        "width": 544
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "aac4e650-f0ac-4309-83b4-7e783620ab82",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        528
+      ],
+      "id": "70ba34d9-bc4d-4870-bb14-ab9ccd0df5c7",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "Z8TFRgAQmUB3woOl",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"predicted_engagement\": 0.0,\n  \"confidence\": \"LOW\",\n  \"risk_level\": \"LOW\",\n  \"short_reason\": \"\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        544
+      ],
+      "id": "120a31c1-9bee-4489-b030-1e022e60c1f1",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Evaluate the following post:\n\nPlatform: {{ $json.post.platform }}\nMedia type: {{ $json.post.media_type }}\nCaption: {{ $json.post.caption }}\nHashtags: {{ $json.post.hashtags }}\nPosting hour: {{ $json.post.posting_hour }}\nCampaign goal: {{ $json.post.campaign }}\n\nReturn:\n- predicted_engagement (number between 0 (bad) and 1 (perfect))\n- confidence (LOW, MEDIUM, HIGH)\n- risk_level (LOW, MEDIUM, HIGH)\n- short_reason (1 sentence)\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a Social Media Performance Analyst.\n\nYour task is to ESTIMATE the expected engagement rate of a social media post BEFORE publication.\n\nYou are NOT predicting real metrics.\nYou are estimating engagement based on known content heuristics and platform best practices.\n\nEnsure numerical scores are consistent with your reasoning.\nScores below 0.2 must correspond to very weak content.\nScores above 0.6 must correspond to strong content.\n\n\nYou must:\n- Consider caption quality\n- CTA presence\n- Hashtag quantity and relevance\n- Media type\n- Platform norms\n- Posting time\nIMPORTANT: DO NOT USE TOOLS. Return ONLY raw JSON text without any tool calls.\nReturn a STRICT JSON object.\nDo not include explanations outside JSON.\nDo not include markdown.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        64,
+        544
+      ],
+      "id": "79b13fd5-4b03-493f-8f2c-ab079e7e23b6",
+      "name": "AI Agent prediction"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Evaluate the following post:\n\nPlatform: {{ $('Normalize Post Data').item.json.post.platform }}\nMedia type: {{ $('Normalize Post Data').item.json.post.media_type }}\nCaption: {{ $('Edit Fields for optimizer').item.json.caption_optimized }}\nHashtags: {{ $('Edit Fields for optimizer').item.json.hashtags }}\nCampaign goal: {{ $('Normalize Post Data').item.json.post.campaign }}\nReturn:\n- predicted_engagement (number between 0 (bad) and 1 (perfect))\n- confidence (LOW, MEDIUM, HIGH)\n- risk_level (LOW, MEDIUM, HIGH)\n- short_reason (1 sentence)\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a Social Media Performance Analyst.\n\nYour task is to ESTIMATE the expected engagement rate of a social media post BEFORE publication.\n\nYou are NOT predicting real metrics.\nYou are estimating engagement based on known content heuristics and platform best practices.\n\nEnsure numerical scores are consistent with your reasoning.\nScores below 0.2 must correspond to very weak content.\nScores above 0.6 must correspond to strong content.\n\n\nYou must:\n- Consider caption quality\n- CTA presence\n- Hashtag quantity and relevance\n- Media type\n- Platform norms\nIMPORTANT: DO NOT USE TOOLS. Return ONLY raw JSON text without any tool calls.\nReturn a STRICT JSON object.\nDo not include explanations outside JSON.\nDo not include markdown.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2288,
+        -288
+      ],
+      "id": "191faf5d-339d-42d1-99c9-41eded580786",
+      "name": "AI Agent prediction1"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        -16
+      ],
+      "id": "e7cdace3-6ec7-48ae-a343-7fdcfaabdd65",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "Z8TFRgAQmUB3woOl",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"predicted_engagement\": 0.0,\n  \"confidence\": \"LOW\",\n  \"risk_level\": \"LOW\",\n  \"short_reason\": \"\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2528,
+        -32
+      ],
+      "id": "dfbda246-646a-4714-9c19-4a58fa83aed9",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const parsed = JSON.parse(item.json.output);\n\n  return {\n    json: {\n      optimized_caption: parsed.optimized_caption,\n      optimized_hashtags: parsed.optimized_hashtags.split(\", \"),\n      changes_made: parsed.changes_made\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        -288
+      ],
+      "id": "490106bf-5ecc-4609-95a5-6f474d484205",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aef01210-a6d9-4190-b872-db9e353cc1d6",
+              "name": "caption_optimized",
+              "value": "={{ $json.optimized_caption }}",
+              "type": "string"
+            },
+            {
+              "id": "8d6998cf-aec4-4f72-808f-d3538b1c2339",
+              "name": "hashtags",
+              "value": "={{ $json.optimized_hashtags }}",
+              "type": "array"
+            },
+            {
+              "id": "c0ac9e18-8820-498c-8bbb-acfff6967e30",
+              "name": "cta",
+              "value": "Shop now",
+              "type": "string"
+            },
+            {
+              "id": "f462b903-678c-4912-bf51-d072b67f013a",
+              "name": "confidence",
+              "value": "HIGH",
+              "type": "string"
+            },
+            {
+              "id": "8349dfa7-6164-4520-a6e1-f5dc67d282b7",
+              "name": "predicted_engagement",
+              "value": 0.7,
+              "type": "number"
+            },
+            {
+              "id": "934613eb-526d-43fe-8291-ea79ec4b725c",
+              "name": "changes",
+              "value": "={{ $json.changes_made }}",
+              "type": "array"
+            },
+            {
+              "id": "03410fd8-ee98-4282-9931-89d310a40eda",
+              "name": "time_optimized",
+              "value": "={{ new Date().toISOString().split('.')[0] + 'Z' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        -288
+      ],
+      "id": "df7b908d-b544-4b97-8442-b3d0861573ea",
+      "name": "Edit Fields for optimizer"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ml-social-media.onrender.com/predict",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"content_type\": \"carousel\",\n    \"content_length\": 3000,\n    \"follower_count\": 12000,\n    \"date_time\": \"2026-10-31 19:15:00\",\n    \"description\": \"the best ever\",\n    \"hashtags\": \"aventure, #incroyable, #nature\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        -80
+      ],
+      "id": "80859c81-b576-462c-b113-28870df2f1c9",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {
+    "AI Agent optimiser": [
+      {
+        "json": {
+          "output": "{\n  \"optimized_caption\": \"Spring into style 🌸! We're launching our fresh new collection with bold colors and must-have pieces. Get ready to refresh your wardrobe now and be one of the first to experience the excitement! #SpringVibes #NewArrivals #FashionLovers #SpringFashion\",\n  \"optimized_hashtags\": \"#SpringVibes, #NewArrivals, #FashionLovers, #SpringFashion, #SpringStyle, #FashionUpdate, #StyleInspo\",\n  \"changes_made\": [\n    \"Added a strong opening hook with 'Spring into style' to grab users' attention\",\n    \"Emphasized the excitement and urgency with 'Get ready to refresh your wardrobe now' to drive engagement\",\n    \"Used more engaging and popular hashtags to increase visibility and reach\",\n    \"Combined some hashtags to create a more concise and efficient caption\"\n  ]\n}"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Normalize Post Data": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check_prediction_engagement": {
+      "main": [
+        [
+          {
+            "node": "Flag Post for Revision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Approve Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flag Post for Revision": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request  to ZOHO1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve Post": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request  to ZOHO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request  to ZOHO": {
+      "main": [
+        [
+          {
+            "node": "Store Zoho Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Post Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request  to ZOHO1": {
+      "main": [
+        [
+          {
+            "node": "Store Zoho Id1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Zoho Id1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent optimiser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Zoho Id": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent optimiser": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update the Post via AI Optimser": {
+      "main": [
+        []
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent optimiser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent prediction",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent prediction",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent prediction": {
+      "main": [
+        []
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent prediction1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent prediction1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields for optimizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent prediction1": {
+      "main": [
+        [
+          {
+            "node": "Update the Post via AI Optimser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields for optimizer": {
+      "main": [
+        [
+          {
+            "node": "AI Agent prediction1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Check_prediction_engagement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "23a6efeb-d0c1-47b3-9465-da153bf3ce49",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3d45f359b90e49ac25fab654dc9d7c72cd40857b48b19314be451ef559b11134"
+  },
+  "id": "EDZQdlOVcyOxwYrG",
+  "tags": []
+}
