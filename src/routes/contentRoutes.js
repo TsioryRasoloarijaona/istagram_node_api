@@ -4,5 +4,6 @@ const contentController = require('../controllers/contentController');
 
 // Content routes
 router.post('/', contentController.postContent);
+router.post('/receive', contentController.receiveContent);
 
 module.exports = router;
