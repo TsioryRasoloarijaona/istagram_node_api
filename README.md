@@ -44,7 +44,7 @@ npm install
 
 3. Create a `.env` file based on `.env.example`:
 ```bash
-cp .env.example .env
+cp .env .env
 ```
 
 4. Start the development server:

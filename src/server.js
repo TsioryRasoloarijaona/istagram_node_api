@@ -15,19 +15,22 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // Routes
 const apiRoutes = require('./routes');
+const webhookRoutes = require('./routes/webhookRoutes');
+
 app.use('/api', apiRoutes);
+app.use('/webhook-test', webhookRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Server is running' });
 });
 
-// 404 handler
+
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });
 });
 
-// Error handler
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
